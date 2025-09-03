@@ -1,0 +1,46 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+
+@layer base {
+    * {
+        @apply border-zinc-800 outline-ring/50;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+@theme {
+    --radius-*: initial;
+
+    --color-background: var(--color-zinc-900);
+    --color-foreground: var(--color-zinc-100);
+
+    --color-card: var(--color-zinc-800);
+    --color-card-foreground: var(--color-foreground);
+
+    --color-popover: var(--color-zinc-700);
+    --color-popover-foreground: var(--color-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-border: var(--color-zinc-700);
+    --color-input: var(--input);
+    --color-ring: var(--color-border);
+
+}
+
+@utility disabled-item {
+    @apply data-[disabled]:pointer-events-none data-[disabled]:opacity-50; 
+}
+
+@utility focusable-item {
+    @apply ring-offset-background data-[focus-visible]:outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2 focus-visible:outline-none;
+}
+
+@utility hoverable-item {
+    @apply bg-card/10 data-[hovered]:bg-card/20;
+}
