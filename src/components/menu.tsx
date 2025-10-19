@@ -57,11 +57,7 @@ export function MenuItem({ children, className, ...props }: AriaMenuItemProps) {
       }
       className={composeRenderProps(className, (className) =>
         clsx(
-          "relative flex select-none items-center gap-2 px-2 py-1.5 text-sm outline-none transition-colors",
-          /* Disabled */
-          "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-          /* Focused */
-          "data-[focused]:bg-accent data-[focused]:text-accent-foreground ",
+          "btn flex relative",
           /* Selection Mode */
           "data-[selection-mode]:pl-8",
           className
@@ -83,10 +79,9 @@ export function MenuItem({ children, className, ...props }: AriaMenuItemProps) {
               </>
             )}
           </span>
-
-          {children}
-
-          {renderProps.hasSubmenu && <ChevronRight className="ml-auto size-4" />}
+          <span className="w-full">
+            {children}
+          </span>
         </>
       ))}
     </AriaMenuItem>
