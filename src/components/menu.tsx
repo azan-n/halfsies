@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Check, ChevronRight, Circle } from "lucide-react"
+import { Check, Circle } from "lucide-react"
 import {
   Header as AriaHeader,
   Keyboard as AriaKeyboard,
@@ -89,22 +89,19 @@ export function MenuItem({ children, className, ...props }: AriaMenuItemProps) {
 }
 
 interface MenuHeaderProps extends React.ComponentProps<typeof AriaHeader> {
-  inset?: boolean
   separator?: boolean
 }
 
 export function MenuHeader({
   className,
-  inset,
   separator = true,
   ...props
 }: MenuHeaderProps) {
   return (
     <AriaHeader
       className={clsx(
-        "px-3 py-1.5 text-sm font-semibold",
-        inset && "pl-8",
-        separator && "-mx-1 mb-1 border-b border-b-border pb-2.5",
+        "px-4 py-1.5 text-sm font-semibold",
+        separator && "mb-1 border-b border-b-border pb-2.5",
         className
       )}
       {...props}

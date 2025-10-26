@@ -7,8 +7,8 @@ export function Card({ className, ...props }: React.ComponentProps<'div'>) {
 
 export function CardHeader({ icon: Icon, children, className, ...props }: React.ComponentProps<'div'> & { icon: LucideIcon }) {
     return <div className={clsx("flex items-center gap-1 pb-4 mb-4 border-b", className)} {...props}>
-        <Icon />
-        <h2 className="text-2xl font-thin">{children}</h2>
+        <Icon className="size-4" />
+        <h2 className="text-sm uppercase font-mono">{children}</h2>
     </div>
 
 }
