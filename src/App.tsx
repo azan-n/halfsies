@@ -2,7 +2,7 @@ import { createContext, use, useEffect, useMemo, useState } from "react"
 import { Button } from "./components/button";
 import { Menu, MenuHeader, MenuItem, MenuPopover, MenuTrigger } from "./components/menu";
 import { TextField, Input } from "./components/input";
-import { Plus, X, Users, Receipt, List, Coins, Share2 } from "lucide-react";
+import { Plus, X, Users, Receipt, List, Coins, Share2, Check } from "lucide-react";
 import { Card, CardHeader } from "./components/card";
 import { Avatar } from "./components/avatar";
 import { encodeUri, decodeUri } from '../lib/encoder'
@@ -122,7 +122,7 @@ export function App() {
       <ExpenseContext value={{ people, setPeople, expenses, setExpenses }}>
         <nav className='py-2 px-8 border-b flex justify-between items-center'>
           <span className='font-mono font-black tracking-tighter uppercase select-none'>halfsies<sup className="stacked-fractions">&frac12;</sup></span>
-          <Button variant="outline" className={'h-8'}>Share <Share2 /></Button>
+          <CopyButton />
         </nav>
         <main className="p-8">
           <article className="grid grid-cols-1 2xl:grid-cols-3 2xl:h-[calc(100vh_-_8em)] gap-4">
@@ -345,3 +345,35 @@ function ExpenseManager() {
   );
 }
 
+
+function CopyButton() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  return (
+    <Button
+      variant="outline"
+      className="h-8"
+      onClick={handleCopy}
+    >
+      {copied ? (
+        <>
+          Copied <Check />
+        </>
+      ) : (
+        <>
+          Share <Share2 />
+        </>
+      )}
+    </Button>
+  );
+}
