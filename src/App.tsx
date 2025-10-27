@@ -124,7 +124,7 @@ export function App() {
           <span className='font-mono font-black tracking-tighter uppercase select-none'>halfsies<sup className="stacked-fractions">&frac12;</sup></span>
         </nav>
         <main className="p-8">
-          <article className="grid grid-cols-1 lg:grid-cols-3 lg:h-[calc(100vh_-_8em)] gap-4">
+          <article className="grid grid-cols-1 2xl:grid-cols-3 2xl:h-[calc(100vh_-_8em)] gap-4">
             <PeopleManager />
             <ExpenseManager />
             <Card className="min-h-96">
@@ -140,7 +140,7 @@ export function App() {
                     ))}
                   </ul>
                 ) : (
-                  <p>All settled 🎉</p>
+                  <p className="text-sm text-muted">All settled 🎉</p>
                 )}
               </section>
             </Card>
@@ -169,17 +169,17 @@ function PeopleManager() {
   };
 
   return (
-    <Card className="">
+    <Card className="flex flex-col min-h-0">
       <CardHeader icon={Users}>People</CardHeader>
       {
-        people.length === 0 && <div className="text-muted text-sm">No people recorded. Use the input field below to add people.</div>
+        people.length === 0 && <div className="text-muted text-sm">No people here. Use the input field below to add people.</div>
       }
-      <div className="flex flex-row flex-wrap gap-4 mb-6">
+      <div className="flex flex-row flex-wrap gap-4 mb-6 min-h-0 overflow-auto">
         {people.map((name, index) => (
           <UserPill key={`${name}-${index}`} name={name} action={() => removePerson(index)} />
         ))}
       </div>
-      <div className="flex flex-col justify-end">
+      <div className="border-t pt-4 mt-auto">
         <TextField>
           <Input
             placeholder="Enter a name"
@@ -237,105 +237,107 @@ function ExpenseManager() {
   };
 
   return (
-    <Card>
+    <Card className="flex flex-col min-h-0">
       <CardHeader icon={Receipt}>Expenses</CardHeader>
-      <section className="flex flex-col flex-1 justify-between">
-        <ol className="mb-4 grow">
-          {expenses.length === 0 && <li className="text-sm text-muted">No expenses recorded.</li>}
-          {expenses.map((expense, index) => (
-            <li className="flex justify-between gap-8 mb-2" key={index}>
-              <span className="text-muted">
-                <Avatar className="size-8" name={people[expense.pb]} /> {people[expense.pb]} paid <span className="tabular-nums inline-flex font-bold items-center gap-1">
-                  <Coins className="inline stroke-muted size-4" />{Intl.NumberFormat(navigator.language).format(expense.a)}
-                </span> {expense.n && <span>for <span className="font-bold">{expense.n}</span></span>} split between <span className="inline-flex items-center">
-                  {expense.i.map(i => <Avatar className="size-8 not-first:-ms-2" name={people[i]} />)}
-                </span> <span>{expense.i.map(i => people[i]).join(', ')}</span>
-              </span>
-              <Button variant="outline" onPress={() => removeExpense(index)}>
-                <X />
-              </Button>
-            </li>
-          ))}
-        </ol>
-        {/* Input */}
-        <div className="mt-auto flex gap-4 items-end">
+      <ol className="mb-4 block min-h-0 overflow-auto">
+        {expenses.length === 0 && <li className="text-sm text-muted">No expenses recorded.</li>}
+        {expenses.map((expense, index) => (
+          <li className="flex justify-between gap-8 mb-2" key={index}>
+            <span className="text-muted">
+              <Avatar className="size-8" name={people[expense.pb]} /> {people[expense.pb]} paid <span className="tabular-nums inline-flex font-bold items-center gap-1">
+                <Coins className="inline stroke-muted size-4" />{Intl.NumberFormat(navigator.language).format(expense.a)}
+              </span> {expense.n && <span>for <span className="font-bold">{expense.n}</span></span>} split between <span className="inline-flex items-center">
+                {expense.i.map(i => <Avatar className="size-8 not-first:-ms-3 bg-popover" name={people[i]} />)}
+              </span> <span>{expense.i.map(i => people[i]).join(', ')}</span>
+            </span>
+            <Button variant="outline" onPress={() => removeExpense(index)}>
+              <X />
+            </Button>
+          </li>
+        ))}
+      </ol>
+      {/* Input */}
+      <div className="mt-auto border-t pt-4 flex gap-4 items-end justify-between flex-wrap">
+        <Input
+          value={newExpense.n}
+          className={'max-w-32'}
+          placeholder="Expense name"
+          onChange={(e) => setNewExpense({ ...newExpense, n: e.target.value })}
+        />
+        <div className="relative w-32">
+          <Coins className="absolute right-2 top-3 opacity-70" />
           <Input
-            value={newExpense.n}
-            className={'shrink'}
-            placeholder="Expense name"
-            onChange={(e) => setNewExpense({ ...newExpense, n: e.target.value })}
+            type="number"
+            style={{ appearance: 'textfield' }}
+            value={newExpense.a}
+            onChange={(e) => setNewExpense({ ...newExpense, a: parseFloat(e.target.value) })}
           />
-          <div className="relative min-w-32">
-            <Coins className="absolute right-2 top-3 opacity-70" />
-            <Input
-              type="number"
-              style={{ appearance: 'textfield' }}
-              value={newExpense.a}
-              onChange={(e) => setNewExpense({ ...newExpense, a: parseFloat(e.target.value) })}
-            />
-          </div>
-
-          <MenuTrigger>
-            <Button isDisabled={people.length === 0} key={people[newExpense.pb]} className={'rounded-full px-0 border-0'} variant="outline">
-              <Avatar className="size-12" name={people[newExpense.pb]} />
-            </Button>
-            <MenuPopover>
-              <MenuHeader>Paid by</MenuHeader>
-              <Menu
-                selectionMode="single"
-                selectedKeys={[newExpense.pb.toString()]}
-                onSelectionChange={(selection) => {
-                  if (selection !== 'all') {
-                    const selected = Array.from(selection)[0];
-                    if (selected) {
-                      setNewExpense({ ...newExpense, pb: parseInt(selected.toString()) });
-                    }
-                  }
-                }}
-              >
-                {people.map((person, index) => (
-                  <MenuItem key={`${person}-${index}`} id={index.toString()}>
-                    {person}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </MenuPopover>
-          </MenuTrigger>
-          <MenuTrigger>
-            <Button variant="outline" className={'px-0 rounded-full border-0 gap-0 bg-transparent'}>
-              {newExpense.i.slice(0, 3).map(i => <Avatar key={`${people[i]}-${i}`} name={people[i]} className="bg-card/80 size-12 not-first:-ms-4 not-first:z-0" />)}
-            </Button>
-            <MenuPopover>
-              <MenuHeader>Split between</MenuHeader>
-              <Menu
-                selectionMode="multiple"
-                selectedKeys={newExpense.i}
-                onSelectionChange={(selection) => {
-                  if (selection !== 'all') {
-                    setNewExpense({ ...newExpense, i: Array.from(selection) as number[] });
-                  } else {
-                    setNewExpense({ ...newExpense, i: people.map((_, i) => i) })
-                  }
-                }}
-              >
-                {people.map((person, index) => (
-                  <MenuItem key={`${person}-${index}`} id={index}>
-                    <Avatar className="size-8" name={person} />{person}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </MenuPopover>
-          </MenuTrigger>
-
-          <Button
-            onPress={addExpense}
-            variant="outline"
-            isDisabled={newExpense.a <= 0 || newExpense.i.length < 2}
-          >
-            <Plus />
-          </Button>
         </div>
-      </section>
+
+        <MenuTrigger>
+          <Button isDisabled={people.length === 0} key={people[newExpense.pb]} className={'rounded-full px-0 border-0'} variant="outline">
+            <Avatar className="size-12" name={people[newExpense.pb]} />
+          </Button>
+          <MenuPopover>
+            <MenuHeader>Paid by</MenuHeader>
+            <Menu
+              selectionMode="single"
+              selectedKeys={[newExpense.pb.toString()]}
+              onSelectionChange={(selection) => {
+                if (selection !== 'all') {
+                  const selected = Array.from(selection)[0];
+                  if (selected) {
+                    setNewExpense({ ...newExpense, pb: parseInt(selected.toString()) });
+                  }
+                }
+              }}
+            >
+              {people.map((person, index) => (
+                <MenuItem key={`${person}-${index}`} id={index.toString()}>
+                  <span className="inline-flex items-center gap-2">
+                    <Avatar className="size-8" name={person} /><span>{person}</span>
+                  </span>
+                </MenuItem>
+              ))}
+            </Menu>
+          </MenuPopover>
+        </MenuTrigger>
+        <MenuTrigger>
+          <Button variant="outline" className={'px-0 rounded-full border-0 gap-0 bg-transparent'}>
+            {newExpense.i.slice(0, 3).map(i => <Avatar key={`${people[i]}-${i}`} name={people[i]} className="bg-popover size-12 not-first:-ms-4 not-first:z-0" />)}
+          </Button>
+          <MenuPopover>
+            <MenuHeader>Split between</MenuHeader>
+            <Menu
+              selectionMode="multiple"
+              selectedKeys={newExpense.i}
+              onSelectionChange={(selection) => {
+                if (selection !== 'all') {
+                  setNewExpense({ ...newExpense, i: Array.from(selection) as number[] });
+                } else {
+                  setNewExpense({ ...newExpense, i: people.map((_, i) => i) })
+                }
+              }}
+            >
+              {people.map((person, index) => (
+                <MenuItem key={`${person}-${index}`} id={index}>
+                  <span className="inline-flex items-center gap-2">
+                    <Avatar className="size-8" name={person} /><span>{person}</span>
+                  </span>
+                </MenuItem>
+              ))}
+            </Menu>
+          </MenuPopover>
+        </MenuTrigger>
+
+        <Button
+          onPress={addExpense}
+          variant="outline"
+          isDisabled={newExpense.a <= 0 || newExpense.i.length < 2}
+        >
+          <Plus />
+        </Button>
+      </div>
     </Card>
   );
 }
