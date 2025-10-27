@@ -2,7 +2,7 @@ import { createContext, use, useEffect, useMemo, useState } from "react"
 import { Button } from "./components/button";
 import { Menu, MenuHeader, MenuItem, MenuPopover, MenuTrigger } from "./components/menu";
 import { TextField, Input } from "./components/input";
-import { Plus, X, Users, Receipt, List, Coins } from "lucide-react";
+import { Plus, X, Users, Receipt, List, Coins, Share2 } from "lucide-react";
 import { Card, CardHeader } from "./components/card";
 import { Avatar } from "./components/avatar";
 import { encodeUri, decodeUri } from '../lib/encoder'
@@ -122,6 +122,7 @@ export function App() {
       <ExpenseContext value={{ people, setPeople, expenses, setExpenses }}>
         <nav className='py-2 px-8 border-b flex justify-between items-center'>
           <span className='font-mono font-black tracking-tighter uppercase select-none'>halfsies<sup className="stacked-fractions">&frac12;</sup></span>
+          <Button variant="outline" className={'h-8'}>Share <Share2 /></Button>
         </nav>
         <main className="p-8">
           <article className="grid grid-cols-1 2xl:grid-cols-3 2xl:h-[calc(100vh_-_8em)] gap-4">
@@ -176,7 +177,7 @@ function PeopleManager() {
       }
       <div className="flex flex-row flex-wrap gap-4 mb-6 min-h-0 overflow-auto">
         {people.map((name, index) => (
-          <UserPill key={`${name}-${index}`} name={name} action={() => removePerson(index)} />
+          <PersonPill key={`${name}-${index}`} name={name} action={() => removePerson(index)} />
         ))}
       </div>
       <div className="border-t pt-4 mt-auto">
@@ -187,7 +188,7 @@ function PeopleManager() {
             onChange={(e) => setNewPersonName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addPerson()}
           />
-          <Button variant="outline" onPress={addPerson} isDisabled={!newPersonName.trim()}>
+          <Button aria-label="Add person" variant="outline" onPress={addPerson} isDisabled={!newPersonName.trim()}>
             <Plus />
           </Button>
         </TextField>
@@ -196,12 +197,13 @@ function PeopleManager() {
   );
 }
 
-function UserPill({ name, action }: { name: string, action?: () => void }) {
+function PersonPill({ name, action }: { name: string, action?: () => void }) {
   return <div className="border bg-popover h-12 rounded-full flex justify-between gap-2 items-center">
     <span className="select-none inline-flex items-center"><Avatar className="size-12 me-1" name={name} /><span className="text-muted">{name}</span></span>
     {action && <Button
       onPress={action}
       className="rounded-full h-full size-full"
+      aria-label="Remove person"
     >
       <X />
     </Button>}
@@ -210,17 +212,16 @@ function UserPill({ name, action }: { name: string, action?: () => void }) {
 
 function ExpenseManager() {
   const { people, expenses, setExpenses } = useExpenses();
-
-  useEffect(() => {
-    setNewExpense({ ...newExpense, i: people.map((_, i) => i) })
-  }, [people])
-
   const [newExpense, setNewExpense] = useState<Expense>({
     n: "",
     a: 0,
     pb: 0,
     i: people.map((_, i) => i)
   });
+
+  useEffect(() => {
+    setNewExpense({ ...newExpense, i: people.map((_, i) => i), pb: 0 })
+  }, [people])
 
   const addExpense = () => {
     setExpenses([...expenses, newExpense]);
@@ -242,15 +243,15 @@ function ExpenseManager() {
       <ol className="mb-4 block min-h-0 overflow-auto">
         {expenses.length === 0 && <li className="text-sm text-muted">No expenses recorded.</li>}
         {expenses.map((expense, index) => (
-          <li className="flex justify-between gap-8 mb-2" key={index}>
+          <li className="flex justify-between gap-8 mb-2 animate-in fade-in slide-in-from-top-5" key={`${expense.a}-${expense.pb}-${index}`}>
             <span className="text-muted">
-              <Avatar className="size-8" name={people[expense.pb]} /> {people[expense.pb]} paid <span className="tabular-nums inline-flex font-bold items-center gap-1">
+              <Avatar className="size-8" key={people[expense.pb]} name={people[expense.pb]} /> {people[expense.pb]} paid <span className="tabular-nums inline-flex font-bold items-center gap-1">
                 <Coins className="inline stroke-muted size-4" />{Intl.NumberFormat(navigator.language).format(expense.a)}
               </span> {expense.n && <span>for <span className="font-bold">{expense.n}</span></span>} split between <span className="inline-flex items-center">
                 {expense.i.map(i => <Avatar className="size-8 not-first:-ms-3 bg-popover" name={people[i]} />)}
               </span> <span>{expense.i.map(i => people[i]).join(', ')}</span>
             </span>
-            <Button variant="outline" onPress={() => removeExpense(index)}>
+            <Button aria-label="Remove expense" variant="outline" onPress={() => removeExpense(index)}>
               <X />
             </Button>
           </li>
@@ -267,6 +268,7 @@ function ExpenseManager() {
         <div className="relative w-32">
           <Coins className="absolute right-2 top-3 opacity-70" />
           <Input
+            aria-label="Expense amount"
             type="number"
             style={{ appearance: 'textfield' }}
             value={newExpense.a}
@@ -275,7 +277,7 @@ function ExpenseManager() {
         </div>
 
         <MenuTrigger>
-          <Button isDisabled={people.length === 0} key={people[newExpense.pb]} className={'rounded-full px-0 border-0'} variant="outline">
+          <Button aria-label="Select person who paid" isDisabled={people.length === 0} key={people[newExpense.pb]} className={'rounded-full px-0 border-0'} variant="outline">
             <Avatar className="size-12" name={people[newExpense.pb]} />
           </Button>
           <MenuPopover>
@@ -303,7 +305,7 @@ function ExpenseManager() {
           </MenuPopover>
         </MenuTrigger>
         <MenuTrigger>
-          <Button variant="outline" className={'px-0 rounded-full border-0 gap-0 bg-transparent'}>
+          <Button aria-label="Select people expense is split between" className={'px-0 rounded-full border-0 gap-0 bg-transparent'}>
             {newExpense.i.slice(0, 3).map(i => <Avatar key={`${people[i]}-${i}`} name={people[i]} className="bg-popover size-12 not-first:-ms-4 not-first:z-0" />)}
           </Button>
           <MenuPopover>
@@ -333,7 +335,8 @@ function ExpenseManager() {
         <Button
           onPress={addExpense}
           variant="outline"
-          isDisabled={newExpense.a <= 0 || newExpense.i.length < 2}
+          isDisabled={newExpense.a <= 0 || newExpense.i.length === 0}
+          aria-label="Add expense"
         >
           <Plus />
         </Button>
