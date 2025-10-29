@@ -120,12 +120,12 @@ export function App() {
   return (
     <>
       <ExpenseContext value={{ people, setPeople, expenses, setExpenses }}>
-        <nav className='py-2 px-8 border-b flex justify-between items-center'>
-          <span className='font-mono font-black tracking-tighter uppercase select-none'>halfsies<sup className="stacked-fractions">&frac12;</sup></span>
-          <CopyButton />
+        <nav className='py-2 px-8 border-b flex justify-between items-center gap-4'>
+          <span className='font-mono font-black tracking-tighter uppercase select-none'>halfsies<sup className="stacked-fractions">&frac12;</sup> | Split bills with complete privacy. No accounts, no data collection, everything stored in the URL.</span>
+          {/* <CopyButton /> */}
         </nav>
         <main className="p-8">
-          <article className="grid grid-cols-1 2xl:grid-cols-3 2xl:h-[calc(100vh_-_8em)] gap-4">
+          <article className="grid grid-cols-1 2xl:grid-cols-3 2xl:h-[calc(100vh_-_12em)] gap-4">
             <PeopleManager />
             <ExpenseManager />
             <Card className="min-h-96">
@@ -148,6 +148,9 @@ export function App() {
           </article>
         </main>
       </ExpenseContext>
+      <footer className="border-t p-8">
+        <div className="font-mono font-bold uppercase text-xs text-center w-full">Made with love, by <a className="text-indigo-700" href="https://azan-n.com">azan-n</a></div>
+      </footer>
     </>
   )
 }
