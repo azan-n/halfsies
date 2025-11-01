@@ -2,7 +2,7 @@ import { createContext, use, useEffect, useMemo, useState } from "react"
 import { Button } from "./components/button";
 import { Menu, MenuHeader, MenuItem, MenuPopover, MenuTrigger } from "./components/menu";
 import { TextField, Input } from "./components/input";
-import { Plus, X, Users, Receipt, List, Coins, Share2, Check } from "lucide-react";
+import { Plus, X, Users, Receipt, List, Coins } from "lucide-react";
 import { Card, CardHeader } from "./components/card";
 import { Avatar } from "./components/avatar";
 import { encodeUri, decodeUri } from '../lib/encoder'
@@ -345,38 +345,5 @@ function ExpenseManager() {
         </Button>
       </div>
     </Card>
-  );
-}
-
-
-function CopyButton() {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
-  return (
-    <Button
-      variant="outline"
-      className="h-8"
-      onClick={handleCopy}
-    >
-      {copied ? (
-        <>
-          Copied <Check />
-        </>
-      ) : (
-        <>
-          Share <Share2 />
-        </>
-      )}
-    </Button>
   );
 }
