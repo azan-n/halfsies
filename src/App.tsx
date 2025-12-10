@@ -48,7 +48,11 @@ export function useExpenses() {
 }
 
 export function App() {
-  const [people, setPeople] = useState<string[]>(["Calra", "Ankur", "Nazia"]);
+  const [people, setPeople] = useState<string[]>([
+    "nazanin kavari",
+    "Ankur",
+    "Nazia",
+  ]);
   const [expenses, setExpenses] = useState<Expense[]>([
     { a: 500, i: [0, 1], n: "Fuel", pb: 0 },
   ]);
@@ -246,13 +250,13 @@ function PersonPill({ name, action }: { name: string; action?: () => void }) {
   return (
     <div className="border bg-popover h-12 rounded-full flex justify-between gap-2 items-center">
       <span className="select-none inline-flex items-center">
-        <Avatar className="size-12 me-1" name={name} />
-        <span className="text-muted">{name}</span>
+        <Avatar className="size-12 me-1 grow" name={name} />
+        <span className="text-muted leading-tight">{name}</span>
       </span>
       {action && (
         <Button
           onPress={action}
-          className="rounded-full h-full size-full"
+          className="rounded-full size-12"
           aria-label="Remove person"
         >
           <X />
