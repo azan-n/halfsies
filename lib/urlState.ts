@@ -24,16 +24,14 @@ export function loadStateFromURL(): URLStateResult {
     const queryParamExpenses = queryParams.get(EXPENSE_SEARCH_KEY);
 
     if (queryParamPeople && queryParamExpenses) {
+      // Decode the old format data
+      const people = decodeUriJson(queryParamPeople);
+      const expenses = decodeUriJson(queryParamExpenses);
+
       // Migrate from query params to hash
       const params = new URLSearchParams();
-      params.set(
-        PEOPLE_SEARCH_KEY,
-        encodeUriBase64(decodeUriJson(queryParamPeople)),
-      );
-      params.set(
-        EXPENSE_SEARCH_KEY,
-        encodeUriBase64(decodeUriJson(queryParamExpenses)),
-      );
+      params.set(PEOPLE_SEARCH_KEY, encodeUriBase64(people));
+      params.set(EXPENSE_SEARCH_KEY, encodeUriBase64(expenses));
 
       // Clean URL by removing query params and using hash
       window.history.replaceState(
@@ -41,9 +39,13 @@ export function loadStateFromURL(): URLStateResult {
         "",
         `${window.location.pathname}#${params.toString()}`,
       );
+
+      // Return the decoded data directly (don't try to read from hash)
+      return { people, expenses };
     }
   }
 
+  // Read from hash (new format or already migrated)
   const hash = window.location.hash.slice(1); // Remove the '#'
   const hashParams = new URLSearchParams(hash);
   const peopleFromParams = hashParams.get(PEOPLE_SEARCH_KEY);
