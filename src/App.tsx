@@ -54,7 +54,7 @@ export function App() {
   ]);
 
   useEffect(() => {
-    const state = loadStateFromURL(window.location);
+    const state = loadStateFromURL();
     setPeople(state.people);
     setExpenses(state.expenses);
   }, []);
