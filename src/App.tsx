@@ -378,6 +378,7 @@ function ExpenseManager() {
             <Menu
               selectionMode="single"
               selectedKeys={[newExpense.pb.toString()]}
+              disallowEmptySelection={true}
               onSelectionChange={(selection) => {
                 if (selection !== "all") {
                   const selected = Array.from(selection)[0];
@@ -418,6 +419,7 @@ function ExpenseManager() {
             <MenuHeader>Split between</MenuHeader>
             <Menu
               selectionMode="multiple"
+              disallowEmptySelection={true}
               selectedKeys={newExpense.i}
               onSelectionChange={(selection) => {
                 if (selection !== "all") {
